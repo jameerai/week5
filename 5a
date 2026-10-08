@@ -1,0 +1,104 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    // Step-5: Wrap root widget with ChangeNotifierProvider
+    ChangeNotifierProvider(
+      create: (_) => CatalogModel(),
+      child: const MyApp(),
+    ),
+  );
+}
+
+// ==========================================
+// MODELS & STATE MANAGEMENT (PROVIDER)
+// ==========================================
+
+// Step-3: Catalog Item Model
+class CatalogItem {
+  final String id;
+  final String name;
+  final String description;
+  final IconData icon;
+  bool isFavorite;
+
+  CatalogItem({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.icon,
+    this.isFavorite = false,
+  });
+}
+
+// Step-4: Shared State Model extending ChangeNotifier
+class CatalogModel extends ChangeNotifier {
+  final List<CatalogItem> _items = [
+    CatalogItem(
+      id: '1',
+      name: 'Flutter Framework',
+      description: 'Cross-platform UI toolkit',
+      icon: Icons.flutter_dash,
+    ),
+    CatalogItem(
+      id: '2',
+      name: 'Dart Programming',
+      description: 'Client-optimized language',
+      icon: Icons.code,
+    ),
+    CatalogItem(
+      id: '3',
+      name: 'Provider Package',
+      description: 'State management solution',
+      icon: Icons.alt_route,
+    ),
+    CatalogItem(
+      id: '4',
+      name: 'Material Design 3',
+      description: 'Adaptable design system',
+      icon: Icons.design_services,
+    ),
+    CatalogItem(
+      id: '5',
+      name: 'Responsive Layouts',
+      description: 'Multi-screen adaptability',
+      icon: Icons.aspect_ratio,
+    ),
+    CatalogItem(
+      id: '6',
+      name: 'Stateful Widgets',
+      description: 'Local ephemeral state',
+      icon: Icons.widgets,
+    ),
+  ];
+
+  List<CatalogItem> get items => List.unmodifiable(_items);
+
+  int get favoriteCount => _items.where((item) => item.isFavorite).length;
+
+  void toggleFavorite(String id) {
+    final index = _items.indexWhere((item) => item.id == id);
+    if (index != -1) {
+      _items[index].isFavorite = !_items[index].isFavorite;
+      notifyListeners(); // Step-4: Notify UI subscribers across all layouts
+    }
+  }
+}
+
+// ==========================================
+// ROOT APPLICATION WIDGET
+// ==========================================
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Responsive & State Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.deepPurple,
+        useMaterial3: true,
+      ),
